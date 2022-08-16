@@ -39,6 +39,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -207,7 +209,15 @@ public class MapMatrix {
                 numTileLayersRead = 0;
                 numHeightLayersRead = 0;
             } else if (line.startsWith(exportPathTag)) {
-                ExportPath = br.readLine();
+                String exportpathvalue = br.readLine();
+                if(exportpathvalue.length() == 0) {
+                    Path p1 = Paths.get(path).getParent();
+                    String textPath = p1.toString();
+                    System.out.println(textPath);
+                    ExportPath = textPath;
+                } else {
+                    ExportPath = exportpathvalue;
+                }
                 System.out.println("Export path: " + ExportPath);
             }
         }
@@ -253,7 +263,15 @@ public class MapMatrix {
             } else if (line.startsWith(areaIndexTag)) {
                 currentAreaIndex = Integer.parseInt(br.readLine());
             } else if (line.startsWith(exportPathTag)) {
-                ExportPath = br.readLine();
+                String exportpathvalue = br.readLine();
+                if(exportpathvalue.length() == 0) {
+                    Path p1 = Paths.get(path).getParent();
+                    String textPath = p1.toString();
+                    System.out.println(textPath);
+                    ExportPath = textPath;
+                } else {
+                    ExportPath = exportpathvalue;
+                }
             } else if (line.startsWith(tileGridTag)) {
                 MapGrid.loadMatrixFromFile(br, currentGrid.tileLayers[numTileLayersRead]);
                 numTileLayersRead++;
