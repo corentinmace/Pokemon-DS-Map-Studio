@@ -2,6 +2,7 @@
 package editor.mapmatrix;
 
 import com.jogamp.common.nio.Buffers;
+import editor.converter.ExportNsbmdDialog;
 import formats.backsound.Backsound;
 import formats.bdhc.Bdhc;
 import formats.bdhc.BdhcLoaderDP;
@@ -49,12 +50,15 @@ import tileset.Tileset;
 import tileset.TilesetIO;
 import utils.Utils;
 
+
 /**
- * @author Trifindo
+ * @author Trifindo, Kuha
  */
 public class MapMatrix {
 
     private static final int expectedMaxNumMaps = 25;
+
+    public static final String exportPathTag = "exportpath";
 
     private static final String mapTag = "mapstart";
     private static final String areaIndexTag = "areaindex";
@@ -76,7 +80,9 @@ public class MapMatrix {
     private HashMap<Integer, FloatBuffer> contourPointsBuffer;
     private HashMap<Integer, Color> areaColors;
 
-    public String filePath = "";
+    public static String filePath = "";
+
+    public static String ExportPath = "";
     public String tilesetFilePath = "";
     public static final String fileExtension = "pdsmap";
 
@@ -113,7 +119,6 @@ public class MapMatrix {
             path = path.concat("." + fileExtension);
         }
 
-
         removeUnusedMaps();
         removeAllUnusedMapFiles();
 
@@ -125,6 +130,9 @@ public class MapMatrix {
         out.println(tilesetTag);
         String filename = Utils.removeExtensionFromPath(new File(path).getName());
         out.println(filename + "." + Tileset.fileExtension);
+
+        out.println(exportPathTag);
+        out.println(ExportPath);
 
         Point minCoords = getMinCoords();
         for (HashMap.Entry<Point, MapData> map : matrix.entrySet()) {
@@ -198,6 +206,9 @@ public class MapMatrix {
                 numMapsRead++;
                 numTileLayersRead = 0;
                 numHeightLayersRead = 0;
+            } else if (line.startsWith(exportPathTag)) {
+                ExportPath = br.readLine();
+                System.out.println("Export path: " + ExportPath);
             }
         }
         if (numMapsRead == 0) {
@@ -241,6 +252,8 @@ public class MapMatrix {
                 currentGrid = new MapGrid(handler);
             } else if (line.startsWith(areaIndexTag)) {
                 currentAreaIndex = Integer.parseInt(br.readLine());
+            } else if (line.startsWith(exportPathTag)) {
+                ExportPath = br.readLine();
             } else if (line.startsWith(tileGridTag)) {
                 MapGrid.loadMatrixFromFile(br, currentGrid.tileLayers[numTileLayersRead]);
                 numTileLayersRead++;

@@ -25,6 +25,7 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.jogamp.opengl.GLContext;
 import editor.about.AboutDialog;
+import editor.exportpath.ExportPathDialog;
 import editor.game.patches.GamePatch;
 import formats.animationeditor.AnimationEditorDialog;
 import formats.backsound.BacksoundEditorDialog;
@@ -66,6 +67,7 @@ import net.miginfocom.swing.MigLayout;
 import org.xml.sax.SAXException;
 import tileset.*;
 import utils.Utils;
+import static editor.mapmatrix.MapMatrix.ExportPath;
 
 /**
  * @author Trifindo, JackHack96
@@ -196,10 +198,12 @@ public class MainFrame extends JFrame {
     private void jmiAddMapsActionPerformed(ActionEvent e) {
         addMapWithDialog();
     }
+    private void JmiChangeExportDefaultPathActionPerformed(ActionEvent e) { showExportPath(); }
 
     private void jmiExportObjWithTextActionPerformed(ActionEvent e) {
         saveMapAsObjWithDialog(true);
     }
+
 
     private void jmiExportMapAsImdActionPerformed(ActionEvent e) {
         saveMapAsImdWithDialog();
@@ -579,6 +583,11 @@ public class MainFrame extends JFrame {
         settingsDialog.setVisible(true);
     }
 
+    public void showExportPath() {
+        ExportPathDialog ExportPathDialog = new ExportPathDialog(this);
+        ExportPathDialog.setVisible(true);
+    }
+
     public void openMap(String path) {
         try {
             String folderPath = new File(path).getParent();
@@ -924,6 +933,8 @@ public class MainFrame extends JFrame {
 
                 handler.setMapMatrix(new MapMatrix(handler));
                 handler.setMapSelected(new Point(0, 0));
+
+                ExportPath = "";
 
                 /*
                 handler.setCollisions(new Collisions(handler.getGameIndex()));
@@ -2027,6 +2038,7 @@ public class MainFrame extends JFrame {
         jmiSaveMap = new JMenuItem();
         jmiSaveMapAs = new JMenuItem();
         jmiAddMaps = new JMenuItem();
+        jmiChangeExportDefaultPath = new JMenuItem();
         jmiExportObjWithText = new JMenuItem();
         jmiExportMapAsImd = new JMenuItem();
         jmiExportMapAsNsb = new JMenuItem();
@@ -2069,6 +2081,7 @@ public class MainFrame extends JFrame {
         jbAddMaps = new JButton();
         jbUndo = new JButton();
         jbRedo = new JButton();
+        jbChangeExportDefault = new JButton();
         jbExportObj = new JButton();
         jbExportImd = new JButton();
         jbExportNsb = new JButton();
@@ -2242,6 +2255,12 @@ public class MainFrame extends JFrame {
                 jmiAddMaps.addActionListener(e -> jmiAddMapsActionPerformed(e));
                 jmFile.add(jmiAddMaps);
                 jmFile.addSeparator();
+
+                //---- jmiChangeExportDefaultPath ----
+                jmiChangeExportDefaultPath.setIcon(new ImageIcon(getClass().getResource("/icons/ExportIcon.png")));
+                jmiChangeExportDefaultPath.setText("Change Export Default...");
+                jmiChangeExportDefaultPath.addActionListener(e -> JmiChangeExportDefaultPathActionPerformed(e));
+                jmFile.add(jmiChangeExportDefaultPath);
 
                 //---- jmiExportObjWithText ----
                 jmiExportObjWithText.setIcon(new ImageIcon(getClass().getResource("/icons/ExportIcon.png")));
@@ -2566,6 +2585,19 @@ public class MainFrame extends JFrame {
             jbRedo.addActionListener(e -> jbRedoActionPerformed(e));
             jtMainToolbar.add(jbRedo);
             jtMainToolbar.addSeparator();
+
+            //---- jbChangeExportDefault ----
+            jbChangeExportDefault.setIcon(new ImageIcon(getClass().getResource("/icons/exportDefaultPathIcon.png")));
+            jbChangeExportDefault.setToolTipText("Change Export Default Path");
+            jbChangeExportDefault.setFocusable(false);
+            jbChangeExportDefault.setHorizontalTextPosition(SwingConstants.CENTER);
+            jbChangeExportDefault.setMaximumSize(new Dimension(38, 38));
+            jbChangeExportDefault.setMinimumSize(new Dimension(38, 38));
+            jbChangeExportDefault.setName("");
+            jbChangeExportDefault.setPreferredSize(new Dimension(38, 38));
+            jbChangeExportDefault.setVerticalTextPosition(SwingConstants.BOTTOM);
+            jbChangeExportDefault.addActionListener(e -> JmiChangeExportDefaultPathActionPerformed(e));
+            jtMainToolbar.add(jbChangeExportDefault);
 
             //---- jbExportObj ----
             jbExportObj.setIcon(new ImageIcon(getClass().getResource("/icons/exportObjIcon.png")));
@@ -3573,6 +3605,7 @@ public class MainFrame extends JFrame {
     private JMenuItem jmiSaveMap;
     private JMenuItem jmiSaveMapAs;
     private JMenuItem jmiAddMaps;
+    private JMenuItem jmiChangeExportDefaultPath;
     private JMenuItem jmiExportObjWithText;
     private JMenuItem jmiExportMapAsImd;
     private JMenuItem jmiExportMapAsNsb;
@@ -3616,6 +3649,7 @@ public class MainFrame extends JFrame {
     private JButton jbUndo;
     private JButton jbRedo;
     private JButton jbExportObj;
+    private JButton jbChangeExportDefault;
     private JButton jbExportImd;
     private JButton jbExportNsb;
     private JButton jbExportBin;
