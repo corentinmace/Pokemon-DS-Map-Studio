@@ -23,6 +23,8 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import net.miginfocom.swing.*;
 
+import static editor.mapmatrix.MapMatrix.ExportPath;
+
 /**
  * @author Trifindo
  */
@@ -248,9 +250,7 @@ public class BdhcamEditorDialog extends JDialog {
 
     private void jbImportBdhcamActionPerformed(ActionEvent e) {
         final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBdhcDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
-        }
+        fc.setCurrentDirectory(new File(ExportPath));
         fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.bdhcam)", Bdhcam.fileExtension));
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open BDHCAM");
@@ -274,9 +274,7 @@ public class BdhcamEditorDialog extends JDialog {
 
     private void jbExportBdhcamActionPerformed(ActionEvent e) {
         final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBdhcDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
-        }
+        fc.setCurrentDirectory(new File(ExportPath));
         fc.setFileFilter(new FileNameExtensionFilter("Camera File (*.bdhcam)", Bdhcam.fileExtension));
         fc.setApproveButtonText("Save");
         fc.setDialogTitle("Save BDHCAM");
