@@ -22,6 +22,8 @@ import javax.swing.filechooser.FileFilter;
 import utils.Utils;
 import utils.swing.*;
 
+import static editor.mapmatrix.MapMatrix.ExportPath;
+
 /**
  * @author Trifindo
  */
@@ -254,7 +256,7 @@ public class ExportNsbtxDialog extends javax.swing.JDialog {
 
     private void jbNsbBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbNsbBrowseActionPerformed
         final JFileChooser fc = new JFileChooser();
-        File folder = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParentFile();
+        File folder = new File(ExportPath);
         fc.setCurrentDirectory(folder);
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fc.setApproveButtonText("Select folder");
@@ -290,7 +292,7 @@ public class ExportNsbtxDialog extends javax.swing.JDialog {
 
         loadAreaIndices();
 
-        String nsbtxFolderPath = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParent();
+        String nsbtxFolderPath = new File(ExportPath).toString();
         if (isFolderPathValid(nsbtxFolderPath)) {
             this.nsbtxFolderPath = nsbtxFolderPath;
             jtfNsbtxFolderPath.setText(nsbtxFolderPath);

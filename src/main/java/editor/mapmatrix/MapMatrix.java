@@ -134,6 +134,12 @@ public class MapMatrix {
         out.println(filename + "." + Tileset.fileExtension);
 
         out.println(exportPathTag);
+        if(ExportPath.length() == 0) {
+            Path p1 = Paths.get(path).getParent();
+            String textPath = p1.toString();
+            System.out.println(textPath);
+            ExportPath = textPath;
+        }
         out.println(ExportPath);
 
         Point minCoords = getMinCoords();
