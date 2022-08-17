@@ -66,6 +66,8 @@ import editor.tileseteditor.*;
 import net.miginfocom.swing.MigLayout;
 import tileset.*;
 import utils.Utils;
+import editor.exportpath.ExportPathDialog;
+import static editor.mapmatrix.MapMatrix.ExportPath;
 
 /**
  * @author Trifindo, JackHack96
@@ -230,6 +232,8 @@ public class MainFrame extends JFrame {
             saveMap();
         }
     }
+
+    private void JmiChangeExportDefaultPathActionPerformed(ActionEvent e) { showExportPath(); }
 
     private void jmiSaveMapAsActionPerformed(ActionEvent e) {
         saveMapWithDialog();
@@ -737,6 +741,11 @@ public class MainFrame extends JFrame {
         settingsDialog.setVisible(true);
     }
 
+    public void showExportPath() {
+        ExportPathDialog ExportPathDialog = new ExportPathDialog(this);
+        ExportPathDialog.setVisible(true);
+    }
+
     public void openMap(String path)  {
         stringForTextThread = "Opening";
         Thread textThread = this.startProgressText(jlStatus,6, 75);
@@ -1171,6 +1180,8 @@ public class MainFrame extends JFrame {
                 handler.setMapMatrix(new MapMatrix(handler));
                 handler.setMapSelected(new Point(0, 0));
 
+                ExportPath = "";
+
                 /*
                 handler.setCollisions(new Collisions(handler.getGameIndex()));
                 handler.setBdhc(new Bdhc());
@@ -1468,7 +1479,7 @@ public class MainFrame extends JFrame {
             final JFileChooser fc = new JFileChooser();
             fc.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)));
             if (handler.getLastMapDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
+                fc.setCurrentDirectory(new File(ExportPath));
             }
             fc.setFileFilter(new FileNameExtensionFilter("OBJ (*.obj)", "obj"));
             fc.setApproveButtonText("Save");
@@ -1872,10 +1883,8 @@ public class MainFrame extends JFrame {
 
     public void saveMapBtxWithDialog() {
         final JFileChooser fcOpen = new JFileChooser();
-        fcOpen.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath) + ".imd"));
-        if (handler.getLastMapDirectoryUsed() != null) {
-            fcOpen.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
-        }
+        fcOpen.setSelectedFile(new File(Utils.removeExtensionFromPath(ExportPath) + ".imd"));
+        fcOpen.setCurrentDirectory(new File(ExportPath));
         fcOpen.setFileFilter(new FileNameExtensionFilter("IMD (*.imd)", "imd"));
         fcOpen.setApproveButtonText("Open");
         fcOpen.setDialogTitle("Open IMD Map for converting into NSBTX");
@@ -1884,7 +1893,7 @@ public class MainFrame extends JFrame {
             String imdPath = fcOpen.getSelectedFile().getPath();
 
             final JFileChooser fcSave = new JFileChooser();
-            fcSave.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)));
+            fcSave.setSelectedFile(new File(ExportPath));
             fcSave.setCurrentDirectory(fcOpen.getSelectedFile().getParentFile());
             fcSave.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
             fcSave.setApproveButtonText("Save");
@@ -2422,6 +2431,7 @@ public class MainFrame extends JFrame {
         jmiSaveMap = new JMenuItem();
         jmiSaveMapAs = new JMenuItem();
         jmiAddMaps = new JMenuItem();
+        jmiChangeExportDefaultPath = new JMenuItem();
         jmiSplitPDSMAPbyArea = new JMenuItem();
         jmiExportObjWithText = new JMenuItem();
         jmiExportMapAsImd = new JMenuItem();
@@ -2476,6 +2486,7 @@ public class MainFrame extends JFrame {
         jbExportAndConvertAll = new JButton();
         jbUndo = new JButton();
         jbRedo = new JButton();
+        jbChangeExportDefault = new JButton();
         jbTilelistEditor = new JButton();
         jbCollisionsEditor = new JButton();
         jbBdhcEditor = new JButton();
@@ -2661,6 +2672,12 @@ public class MainFrame extends JFrame {
                 jmiSplitPDSMAPbyArea.addActionListener(e -> jmiSplitPDSMAPbyAreaActionPerformed(e));
                 jmFile.add(jmiSplitPDSMAPbyArea);
                 jmFile.addSeparator();
+
+                //---- jmiChangeExportDefaultPath ----
+                jmiChangeExportDefaultPath.setIcon(new ImageIcon(getClass().getResource("/icons/ExportIcon.png")));
+                jmiChangeExportDefaultPath.setText("Change Export Default...");
+                jmiChangeExportDefaultPath.addActionListener(e -> JmiChangeExportDefaultPathActionPerformed(e));
+                jmFile.add(jmiChangeExportDefaultPath);
 
                 //---- jmiExportObjWithText ----
                 jmiExportObjWithText.setIcon(new ImageIcon(getClass().getResource("/icons/ExportIcon.png")));
@@ -2996,6 +3013,19 @@ public class MainFrame extends JFrame {
             jbRedo.addActionListener(e -> jbRedoActionPerformed(e));
             jtMainToolbar.add(jbRedo);
             jtMainToolbar.addSeparator();
+
+            //---- jbChangeExportDefault ----
+            jbChangeExportDefault.setIcon(new ImageIcon(getClass().getResource("/icons/exportDefaultPathIcon.png")));
+            jbChangeExportDefault.setToolTipText("Change Export Default Path");
+            jbChangeExportDefault.setFocusable(false);
+            jbChangeExportDefault.setHorizontalTextPosition(SwingConstants.CENTER);
+            jbChangeExportDefault.setMaximumSize(new Dimension(38, 38));
+            jbChangeExportDefault.setMinimumSize(new Dimension(38, 38));
+            jbChangeExportDefault.setName("");
+            jbChangeExportDefault.setPreferredSize(new Dimension(38, 38));
+            jbChangeExportDefault.setVerticalTextPosition(SwingConstants.BOTTOM);
+            jbChangeExportDefault.addActionListener(e -> JmiChangeExportDefaultPathActionPerformed(e));
+            jtMainToolbar.add(jbChangeExportDefault);
 
             //---- jbExportObj2 ----
             jbExportObj2.setIcon(new ImageIcon(getClass().getResource("/icons/exportObjIcon.png")));
@@ -4161,6 +4191,7 @@ public class MainFrame extends JFrame {
     private JMenuItem jmiSaveMap;
     private JMenuItem jmiSaveMapAs;
     private JMenuItem jmiAddMaps;
+    private JMenuItem jmiChangeExportDefaultPath;
     private JMenuItem jmiSplitPDSMAPbyArea;
     private JMenuItem jmiExportObjWithText;
     private JMenuItem jmiExportMapAsImd;
@@ -4207,6 +4238,8 @@ public class MainFrame extends JFrame {
     private JButton jbUndo;
     private JButton jbRedo;
     private JButton jbExportObj2;
+    private JButton jbChangeExportDefault;
+
     private JButton jbExportImd;
     private JButton jbExportNsb;
     private JButton jbExportBin;
