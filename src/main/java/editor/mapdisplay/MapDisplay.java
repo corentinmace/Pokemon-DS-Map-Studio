@@ -101,6 +101,7 @@ import utils.Utils;
 public class MapDisplay extends GLJPanel implements GLEventListener, MouseListener, MouseMotionListener, KeyListener, MouseWheelListener {
 
     //Editor Handler
+    private boolean mouseWheelEnabled = true;
     protected MapEditorHandler handler;
 
     //Grid
@@ -218,6 +219,14 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         //smartGridCursor = Utils.loadCursor("/cursors/smartGridCursor.png");
         //smartGridInvertedCursor = Utils.loadCursor("/cursors/smartGridInvertedCursor.png");
         //clearTileCursor = Utils.loadCursor("/cursors/clearTileCursor.png");
+    }
+
+    public boolean isMouseWheelEnabled() {
+        return mouseWheelEnabled;
+    }
+
+    public void setMouseWheelEnabled(boolean mouseWheelEnabled) {
+        this.mouseWheelEnabled = mouseWheelEnabled;
     }
 
     @Override
@@ -471,6 +480,15 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
                 changeLayerWithNumKey(e, 7);
                 repaint();
                 break;
+            case KeyEvent.VK_9:
+                changeLayerWithNumKey(e, 8);
+                repaint();
+                break;
+            case KeyEvent.VK_BACK_SLASH:
+                handler.setAllLayersState(true);
+                handler.getMainFrame().getThumbnailLayerSelector().repaint();
+                repaint();
+                break;
         }
 
     }
@@ -487,7 +505,8 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        viewMode.mouseWheelMoved(this, e);
+        if (mouseWheelEnabled)
+            viewMode.mouseWheelMoved(this, e);
     }
 
     @Override
@@ -497,9 +516,9 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         if (handler != null) {
             viewMode.paintComponent(this, g);
 
-            if (backImageEnabled) {
-                drawBackImage(g);
-            }
+            //if (backImageEnabled) {
+            //    drawBackImage(g);
+            //}
         }
 
     }
@@ -1609,8 +1628,12 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
 
     public void drawBackImage(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
+
+        Point p = handler.getMapSelected();
         g2d.setComposite(AlphaComposite.SrcOver.derive(backImageAlpha));
-        g2d.drawImage(backImage, borderSize * tileSize, borderSize * tileSize, null);
+        g2d.drawImage(backImage,
+                borderSize * tileSize + p.x * cols * tileSize,
+                borderSize * tileSize + p.y * rows * tileSize, null);
         g2d.setComposite(AlphaComposite.SrcOver.derive(1.0f));
     }
 

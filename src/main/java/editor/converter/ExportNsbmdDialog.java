@@ -20,7 +20,6 @@ import net.miginfocom.swing.*;
 
 import utils.Utils;
 import utils.swing.*;
-
 import static editor.mapmatrix.MapMatrix.ExportPath;
 
 /**
@@ -162,7 +161,7 @@ public class ExportNsbmdDialog extends javax.swing.JDialog {
             jbNsbBrowse.addActionListener(e -> jbNsbBrowseActionPerformed(e));
 
             //---- jCheckBox1 ----
-            jCheckBox1.setSelected(true);
+            jCheckBox1.setSelected(false);
             jCheckBox1.setText("Include NSBTX in NSBMD");
 
             GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
@@ -248,7 +247,7 @@ public class ExportNsbmdDialog extends javax.swing.JDialog {
 
     private void jbImdBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbImdBrowseActionPerformed
         final JFileChooser fc = new JFileChooser();
-        //File folder = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParentFile();
+        // folder = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParentFile();
         File folder = new File(ExportPath);
         fc.setCurrentDirectory(folder);
         //fc.setSelectedFile(folder);
@@ -271,7 +270,7 @@ public class ExportNsbmdDialog extends javax.swing.JDialog {
         fc.setApproveButtonText("Select folder");
         fc.setDialogTitle("Select the folder that contains the IMD files");
 
-        int returnValOpen = fc.showOpenDialog(this);
+        final int returnValOpen = fc.showOpenDialog(this);
         if (returnValOpen == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             if (file.exists()) {
@@ -346,7 +345,7 @@ public class ExportNsbmdDialog extends javax.swing.JDialog {
         fc.setApproveButtonText("Select folder");
         fc.setDialogTitle("Select the folder for exporting the IMD files");
 
-        int returnValOpen = fc.showOpenDialog(this);
+        final int returnValOpen = fc.showOpenDialog(this);
         if (returnValOpen == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             if (file.exists() && file.isDirectory()) {

@@ -12,10 +12,11 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import javax.swing.*;
-import javax.swing.GroupLayout;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import static editor.mapmatrix.MapMatrix.ExportPath;
+
 
 import static editor.mapmatrix.MapMatrix.ExportPath;
 
@@ -73,6 +74,16 @@ public class BdhcEditorDialog extends JDialog {
     private void jbRemovePlateActionPerformed(ActionEvent e) {
         if (bdhcHandler.getPlates().size() > 1) {
             bdhcHandler.removeSelectedPlate();
+
+            updateViewPlateNames();
+            updateViewBdhcDisplay3D();
+            repaint();
+        }
+    }
+
+    private void jbDuplicatePlateActionPerformed(ActionEvent e) {
+        if (bdhcHandler.getPlates().size() > 0) {
+            bdhcHandler.duplicateSelectedPlate();
 
             updateViewPlateNames();
             updateViewBdhcDisplay3D();
@@ -335,7 +346,7 @@ public class BdhcEditorDialog extends JDialog {
         fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.bdhc)", Bdhc.fileExtension));
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open");
-        int returnVal = fc.showOpenDialog(this);
+        final int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
                 String path = fc.getSelectedFile().getPath();
@@ -365,7 +376,7 @@ public class BdhcEditorDialog extends JDialog {
         fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.bdhc)", Bdhc.fileExtension));
         fc.setApproveButtonText("Save");
         fc.setDialogTitle("Save");
-        int returnVal = fc.showOpenDialog(this);
+        final int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
                 String path = fc.getSelectedFile().getPath();
@@ -574,6 +585,7 @@ public class BdhcEditorDialog extends JDialog {
         panel2 = new JPanel();
         jbAddPlate = new JButton();
         jbRemovePlate = new JButton();
+        jbDuplicatePlate = new JButton();
         jPanel2 = new JPanel();
         jLabel2 = new JLabel();
         jsCoordZ = new JSpinner();
@@ -591,17 +603,17 @@ public class BdhcEditorDialog extends JDialog {
         //======== this ========
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("BDHC Editor");
-        setMinimumSize(null);
+        setMinimumSize(new Dimension(1300, 625));
         setModal(true);
         Container contentPane = getContentPane();
         contentPane.setLayout(new MigLayout(
             "fill,insets 5,hidemode 3,gapx 5",
             // columns
-            "[942,fill]" +
+            "[1022,fill]" +
             "[grow,fill]",
             // rows
             "[]" +
-            "[512,grow,fill]"));
+            "[622,grow,fill]"));
 
         //======== panel4 ========
         {
@@ -637,7 +649,7 @@ public class BdhcEditorDialog extends JDialog {
         //======== splitPane1 ========
         {
             splitPane1.setResizeWeight(0.5);
-            splitPane1.setDividerLocation(350);
+            splitPane1.setDividerLocation(290);
 
             //======== panel3 ========
             {
@@ -701,7 +713,7 @@ public class BdhcEditorDialog extends JDialog {
 
             //======== displayContainer ========
             {
-                displayContainer.setMinimumSize(new Dimension(300, 300));
+                displayContainer.setMinimumSize(new Dimension(480, 480));
                 displayContainer.setBorder(new LineBorder(Color.lightGray));
                 displayContainer.addComponentListener(new ComponentAdapter() {
                     @Override
@@ -779,6 +791,12 @@ public class BdhcEditorDialog extends JDialog {
                     jbRemovePlate.setText("Remove Plate");
                     jbRemovePlate.addActionListener(e -> jbRemovePlateActionPerformed(e));
                     panel2.add(jbRemovePlate);
+
+                    //---- jbDuplicatePlate ----
+                    jbDuplicatePlate.setIcon(new ImageIcon(getClass().getResource("/icons/CopyIcon.png")));
+                    jbDuplicatePlate.setText("Duplicate Plate");
+                    jbDuplicatePlate.addActionListener(e -> jbDuplicatePlateActionPerformed(e));
+                    panel2.add(jbDuplicatePlate);
                 }
                 jPanel1.add(panel2, "cell 0 1");
             }
@@ -934,6 +952,7 @@ public class BdhcEditorDialog extends JDialog {
     private JPanel panel2;
     private JButton jbAddPlate;
     private JButton jbRemovePlate;
+    private JButton jbDuplicatePlate;
     private JPanel jPanel2;
     private JLabel jLabel2;
     private JSpinner jsCoordZ;

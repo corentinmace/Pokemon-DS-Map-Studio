@@ -46,6 +46,10 @@ public class MapData {
 
     //Area index
     private int areaIndex;
+    
+    //Exportgroup index
+    private int exportgroupIndex;
+    private boolean isExportGroupCenter = false;
 
     public MapData(MapEditorHandler handler) {
         this.handler = handler;
@@ -59,6 +63,7 @@ public class MapData {
         bdhcam = new Bdhcam();
 
         areaIndex = 0;
+        exportgroupIndex = 0;
         //System.out.println("Map data created");
     }
 
@@ -159,16 +164,32 @@ public class MapData {
     public void setAreaIndex(int areaIndex) {
         this.areaIndex = areaIndex;
     }
-
+    
     public int getAreaIndex() {
         return areaIndex;
     }
+    
+    public void setExportgroupIndex(int exportgroupIndex) {
+        this.exportgroupIndex = exportgroupIndex;
+    }
 
+    public int getExportGroupIndex() {
+        return this.exportgroupIndex;
+    }
+        
     public Bdhcam getBdhcam() {
         return bdhcam;
     }
 
     public void setBdhcam(Bdhcam bdhcam) {
         this.bdhcam = bdhcam;
+    }
+
+    public boolean isExportGroupCenter() {
+        return isExportGroupCenter;
+    }
+
+    public void setExportGroupCenter(boolean exportGroupCenter) {
+        isExportGroupCenter = exportGroupCenter;
     }
 }

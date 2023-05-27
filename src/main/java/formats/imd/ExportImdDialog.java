@@ -70,7 +70,7 @@ public class ExportImdDialog extends JDialog {
         fc.setApproveButtonText("Select folder");
         fc.setDialogTitle("Select the folder that contains the OBJ files");
 
-        int returnValOpen = fc.showOpenDialog(this);
+        final int returnValOpen = fc.showOpenDialog(this);
         if (returnValOpen == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             if (file.exists()) {
@@ -145,7 +145,7 @@ public class ExportImdDialog extends JDialog {
         fc.setApproveButtonText("Select folder");
         fc.setDialogTitle("Select the folder for exporting the IMD files");
 
-        int returnValOpen = fc.showOpenDialog(this);
+        final int returnValOpen = fc.showOpenDialog(this);
         if (returnValOpen == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             if (file.exists() && file.isDirectory()) {
@@ -195,7 +195,8 @@ public class ExportImdDialog extends JDialog {
             }
 
             for (int i = 0; i < model.getSize(); i++) {
-                model.get(i).setSelected(hasMatrixCoordsInObjName(model.get(i).getText()));
+                //model.get(i).setSelected(hasMatrixCoordsInObjName(model.get(i).getText()));
+                model.get(i).setSelected(true);
             }
             jScrollCheckboxList.getCheckboxList().setModel(model);
 

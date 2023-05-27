@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.TreeSet;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -262,7 +263,7 @@ public class ExportNsbtxDialog extends javax.swing.JDialog {
         fc.setApproveButtonText("Select folder");
         fc.setDialogTitle("Select the folder for exporting the IMD files");
 
-        int returnValOpen = fc.showOpenDialog(this);
+        final int returnValOpen = fc.showOpenDialog(this);
         if (returnValOpen == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             if (file.exists() && file.isDirectory()) {
@@ -311,7 +312,7 @@ public class ExportNsbtxDialog extends javax.swing.JDialog {
 
     private void loadAreaIndices() {
 
-        HashSet<Integer> areaIndicesSet = handler.getMapMatrix().getAreaIndices();
+        TreeSet<Integer> areaIndicesSet = handler.getMapMatrix().getAreaIndices();
 
         areaIndices = new ArrayList();
         areaIndices.addAll(areaIndicesSet);

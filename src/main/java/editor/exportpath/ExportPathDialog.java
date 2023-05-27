@@ -77,22 +77,22 @@ public class ExportPathDialog extends JDialog {
         //======== dialogPane ========
         {
             dialogPane.setLayout(new MigLayout(
-                "insets 0,hidemode 3,gap 0 0",
-                // columns
-                "[grow,fill]",
-                // rows
-                "[grow,fill]" +
-                "[fill]"));
+                    "insets 0,hidemode 3,gap 0 0",
+                    // columns
+                    "[grow,fill]",
+                    // rows
+                    "[grow,fill]" +
+                            "[fill]"));
 
             //======== contentPanel ========
             {
                 contentPanel.setLayout(new MigLayout(
-                    "insets dialog,hidemode 3",
-                    // columns
-                    "[fill]" +
-                    "[grow,fill]",
-                    // rows
-                    "[]"));
+                        "insets dialog,hidemode 3",
+                        // columns
+                        "[fill]" +
+                                "[grow,fill]",
+                        // rows
+                        "[]"));
 
                 //======== export path =======
 
@@ -109,12 +109,12 @@ public class ExportPathDialog extends JDialog {
             //======== buttonBar ========
             {
                 buttonBar.setLayout(new MigLayout(
-                    "insets dialog,alignx right",
-                    // columns
-                    "[button,fill]" +
-                    "[button,fill]",
-                    // rows
-                    "[fill]"));
+                        "insets dialog,alignx right",
+                        // columns
+                        "[button,fill]" +
+                                "[button,fill]",
+                        // rows
+                        "[fill]"));
 
                 //---- okButton ----
                 okButton.setText("OK");
