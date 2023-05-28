@@ -1,5 +1,75 @@
 package editor;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import com.jogamp.opengl.GLContext;
+import editor.about.AboutDialog;
+import editor.buildingeditor2.BuildingEditorChooser;
+import editor.cameraFileReader.CameraFileReader;
+import editor.converter.*;
+import editor.exportpath.ExportPathDialog;
+import editor.game.Game;
+import editor.gameselector.GameChangerDialog;
+import editor.gameselector.GameSelectorDialog;
+import editor.gameselector.GameTsetSelectorDialog2;
+import editor.grid.MapGrid;
+import editor.handler.MapData;
+import editor.handler.MapEditorHandler;
+import editor.heightselector.HeightSelector;
+import editor.keyboard.KeyboardInfoDialog2;
+import editor.layerselector.ThumbnailLayerSelector;
+import editor.mapdisplay.MapDisplay;
+import editor.mapdisplay.ViewMode;
+import editor.mapgroups.SavePDSMAPAreasDialog;
+import editor.mapgroups.VisualizeExportGroupsDialog;
+import editor.mapmatrix.MapMatrix;
+import editor.mapmatrix.MapMatrixDisplay;
+import editor.mapmatrix.MapMatrixImportDialog;
+import editor.mapmatrix.MoveMapPanel;
+import editor.settings.SettingsDialog;
+import editor.smartdrawing.SmartGrid;
+import editor.smartdrawing.SmartGridDisplay;
+import editor.state.MapLayerState;
+import editor.state.StateHandler;
+import editor.tileselector.TileSelector;
+import editor.tileseteditor.AddTileDialog;
+import editor.tileseteditor.ExportTileDialog;
+import editor.tileseteditor.TileDisplay;
+import editor.tileseteditor.TilesetEditorDialog;
+import formats.animationeditor.AnimationEditorDialog;
+import formats.backsound.BacksoundEditorDialog;
+import formats.bdhc.BdhcEditorDialog;
+import formats.bdhcam.BdhcamEditorDialog;
+import formats.collisions.CollisionsEditorDialog;
+import formats.collisions.bw.CollisionsEditorDialogBW;
+import formats.imd.ExportImdDialog;
+import formats.imd.ImdModel;
+import formats.imd.ImdOutputInfoDialog;
+import formats.mapbin.ExportMapBinDialog;
+import formats.mapbin.ExportMapBinInfoDialog;
+import formats.nsbtx.NsbtxEditorDialog;
+import formats.nsbtx2.Nsbtx2;
+import formats.nsbtx2.NsbtxEditorDialog2;
+import formats.nsbtx2.NsbtxLoader2;
+import formats.obj.ExportMapsObjDialog;
+import formats.obj.ExportSingleMapObjDialog;
+import formats.obj.ObjWriter;
+import net.arikia.dev.drpc.DiscordEventHandlers;
+import net.arikia.dev.drpc.DiscordRPC;
+import net.arikia.dev.drpc.DiscordRichPresence;
+import net.miginfocom.swing.MigLayout;
+import tileset.*;
+import utils.Utils;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -7,73 +77,17 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.prefs.Preferences;
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.GroupLayout;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-import com.jogamp.opengl.GLContext;
-import editor.about.AboutDialog;
-import editor.grid.MapGrid;
-import editor.mapgroups.SavePDSMAPAreasDialog;
-import editor.mapgroups.VisualizeExportGroupsDialog;
-import formats.animationeditor.AnimationEditorDialog;
-import formats.backsound.BacksoundEditorDialog;
-import formats.bdhc.BdhcEditorDialog;
-import formats.bdhcam.BdhcamEditorDialog;
-import editor.buildingeditor2.BuildingEditorChooser;
-import formats.collisions.CollisionsEditorDialog;
-import formats.collisions.bw.CollisionsEditorDialogBW;
-import editor.converter.*;
-import editor.game.Game;
-import editor.gameselector.GameChangerDialog;
-import editor.gameselector.GameSelectorDialog;
-import editor.gameselector.GameTsetSelectorDialog2;
-import editor.handler.MapData;
-import editor.handler.MapEditorHandler;
-import editor.heightselector.*;
-import formats.imd.ExportImdDialog;
-import formats.imd.ImdModel;
-import formats.imd.ImdOutputInfoDialog;
-import editor.keyboard.KeyboardInfoDialog2;
-import editor.layerselector.*;
-import editor.mapdisplay.*;
-import editor.mapmatrix.*;
-import formats.mapbin.ExportMapBinDialog;
-import formats.mapbin.ExportMapBinInfoDialog;
-import formats.nsbtx.NsbtxEditorDialog;
-import formats.nsbtx2.Nsbtx2;
-import formats.nsbtx2.NsbtxEditorDialog2;
-import formats.nsbtx2.NsbtxLoader2;
-import formats.obj.ExportSingleMapObjDialog;
-import formats.obj.ExportMapsObjDialog;
-import formats.obj.ObjWriter;
-import editor.settings.SettingsDialog;
-import editor.smartdrawing.*;
-import editor.state.MapLayerState;
-import editor.state.StateHandler;
-import editor.tileselector.*;
-import editor.tileseteditor.*;
-import net.miginfocom.swing.MigLayout;
-import tileset.*;
-import utils.Utils;
-import editor.exportpath.ExportPathDialog;
 import static editor.mapmatrix.MapMatrix.ExportPath;
 
 /**
  * @author Trifindo, JackHack96
  */
 public class MainFrame extends JFrame {
-    MapEditorHandler handler;
+    public static MapEditorHandler handler;
 
     private String stringForTextThread = "";
 
@@ -118,9 +132,38 @@ public class MainFrame extends JFrame {
             }
         });
     }
+    public void startup() {
+        DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler((user) -> {
+            System.out.println("Welcome " + user.username + "#" + user.discriminator + "!");
+        }).build();
+        DiscordRPC.discordInitialize("1036416175279718542", handlers, true);
+    }
+
+    public void createNewPresence(String map) {
+        boolean HideMap = prefs.getBoolean("HideMap", false);
+        String message = "Just started PDSMS.";
+        System.out.println(map);
+
+        if(map.length() > 0) {
+            message = "Working on " + map + "...";
+        }
+        if(HideMap) {
+            message = "Working on something...";
+        }
+
+        DiscordRichPresence rich = new DiscordRichPresence.Builder(message)
+                .setBigImage("programiconhd", "PDSMS By Trifindo")
+                .setStartTimestamps(System.currentTimeMillis() / 1000)
+                .build();
+        DiscordRPC.discordUpdatePresence(rich);
+    }
+
+
 
     public MainFrame() {
         initComponents();
+        startup();
+        createNewPresence("");
 
         updateRecentMapsMenu();
 
@@ -234,6 +277,8 @@ public class MainFrame extends JFrame {
     }
 
     private void JmiChangeExportDefaultPathActionPerformed(ActionEvent e) { showExportPath(); }
+
+    private void JmiChangeExportCameraReaderActionPerformed(ActionEvent e) { showCameraReader(); }
 
     private void jmiSaveMapAsActionPerformed(ActionEvent e) {
         saveMapWithDialog();
@@ -746,6 +791,15 @@ public class MainFrame extends JFrame {
         ExportPathDialog.setVisible(true);
     }
 
+    public void showCameraReader() {
+        if (handler.getGame().gameSelected > Game.PEARL && handler.getGame().gameSelected < Game.BLACK) {
+            CameraFileReader CameraFileReader = new CameraFileReader(this);
+            CameraFileReader.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "This feature is only available for Platinum and HGSS.");
+        }
+    }
+
     public void openMap(String path)  {
         stringForTextThread = "Opening";
         Thread textThread = this.startProgressText(jlStatus,6, 75);
@@ -762,7 +816,9 @@ public class MainFrame extends JFrame {
                 handler.getMapMatrix().filePath = path;
                 handler.setDefaultMapSelected();
 
-                setTitle(handler.getMapName() + " - " + handler.getVersionName());
+
+            setTitle(handler.getMapName() + " - " + handler.getVersionName());
+            createNewPresence(handler.getMapName());
 
                 handler.resetMapStateHandler();
                 jbUndo.setEnabled(false);
@@ -1240,7 +1296,7 @@ public class MainFrame extends JFrame {
                 handler.getMapMatrix().saveBDHCs(entrySet);
                 handler.getMapMatrix().saveBdhcams(entrySet);
                 handler.getMapMatrix().saveBuildings(entrySet);
-                
+
                 //handler.getMapMatrix().saveBinaryMaps();
 	            //saveBdhc();
 	            //saveBacksound();
@@ -1295,7 +1351,7 @@ public class MainFrame extends JFrame {
                     handler.getMapMatrix().saveBDHCs(entrySet);
                     handler.getMapMatrix().saveBdhcams(entrySet);
                     handler.getMapMatrix().saveBuildings(entrySet);
-                    
+
                     //handler.getMapMatrix().saveBinaryMaps();
 	                //saveCollisions();
 	                //saveBacksound();
@@ -1436,7 +1492,7 @@ public class MainFrame extends JFrame {
         }
         return false;
     }
-    
+
     private void saveMapAsBinWithDialog(){
         if(handler.getGame().gameSelected >= Game.BLACK){
             JOptionPane.showMessageDialog(this, "Can't save Gen V binary files yet", "Error saving bin map", JOptionPane.ERROR_MESSAGE);
@@ -2432,6 +2488,7 @@ public class MainFrame extends JFrame {
         jmiSaveMapAs = new JMenuItem();
         jmiAddMaps = new JMenuItem();
         jmiChangeExportDefaultPath = new JMenuItem();
+        jmiCameraFileReader = new JMenuItem();
         jmiSplitPDSMAPbyArea = new JMenuItem();
         jmiExportObjWithText = new JMenuItem();
         jmiExportMapAsImd = new JMenuItem();
@@ -2665,6 +2722,12 @@ public class MainFrame extends JFrame {
                 jmiAddMaps.addActionListener(e -> jmiAddMapsActionPerformed(e));
                 jmFile.add(jmiAddMaps);
                 jmFile.addSeparator();
+
+                //---- jmiCameraFileReader ----
+                jmiCameraFileReader.setIcon(new ImageIcon(getClass().getResource("/icons/bdhcamEditorIcon.png")));
+                jmiCameraFileReader.setText("Camera File Reader...");
+                jmiCameraFileReader.addActionListener(e -> JmiChangeExportCameraReaderActionPerformed(e));
+                jmFile.add(jmiCameraFileReader);
 
                 //---- jmiSplitPDSMAPbyArea ----
                 jmiSplitPDSMAPbyArea.setText("Split PDSMAP by Area");
@@ -4192,6 +4255,8 @@ public class MainFrame extends JFrame {
     private JMenuItem jmiSaveMapAs;
     private JMenuItem jmiAddMaps;
     private JMenuItem jmiChangeExportDefaultPath;
+
+    private JMenuItem jmiCameraFileReader;
     private JMenuItem jmiSplitPDSMAPbyArea;
     private JMenuItem jmiExportObjWithText;
     private JMenuItem jmiExportMapAsImd;
@@ -4239,7 +4304,6 @@ public class MainFrame extends JFrame {
     private JButton jbRedo;
     private JButton jbExportObj2;
     private JButton jbChangeExportDefault;
-
     private JButton jbExportImd;
     private JButton jbExportNsb;
     private JButton jbExportBin;
